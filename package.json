@@ -29,6 +29,7 @@
     "gulp-sourcemaps": "^1.5.2"
   },
   "dependencies": {
-    "cnd": "^1.0.4"
+    "cnd": "^1.0.4",
+    "coffeenode-text": "^0.1.9"
   }
 }
