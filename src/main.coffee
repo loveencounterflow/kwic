@@ -35,14 +35,17 @@ LODASH                    = CND.LODASH
   alphabet    = settings?[ 'alphabet'   ] ? null
   #.........................................................................................................
   R =
-    '~isa':         'KWIC/base'
-    'entries':      null
-    'length':       0
-    'entries':      []
-    'factors':      null
-    'factorizer':   factorizer
-    'alphabet':     alphabet
-    'weights':      null
+    '~isa':               'KWIC/base'
+    'entries':            null
+    'length':             0
+    'entries':            []
+    'factors':            null
+    'factorizer':         factorizer
+    'alphabet':           alphabet
+    'weights':            null
+    'normalize-lengths':  true
+    'max-length':         -Infinity
+    'is-positioned':      false
   #.........................................................................................................
   if ( entries = settings?[ 'entries' ] )?
     @add R, entry for entry in entries
@@ -50,6 +53,9 @@ LODASH                    = CND.LODASH
       @factorize
   #.........................................................................................................
   return R
+
+#-----------------------------------------------------------------------------------------------------------
+@filler = Symbol '-'
 
 #-----------------------------------------------------------------------------------------------------------
 @add = ( me, entry ) ->
@@ -65,7 +71,9 @@ LODASH                    = CND.LODASH
   throw new Error "unable to factorize another time" if me[ 'factors' ]?
   me[ 'factors' ]   = []
   factorizer       ?= @_get_factorizer me, factorizer
-  me[ 'factors' ].push factorizer entry for entry in me[ 'entries' ]
+  for entry in me[ 'entries' ]
+    me[ 'factors' ].push factor_list = factorizer entry
+    me[ 'max-length' ]  = Math.max me[ 'max-length' ], facl
   return me
 
 #-----------------------------------------------------------------------------------------------------------
@@ -93,7 +101,6 @@ LODASH                    = CND.LODASH
     me[ 'weights' ].push ( weighter factor for factor in factor_list )
   return me
 
-
 #-----------------------------------------------------------------------------------------------------------
 @_get_weighter = ( me, alphabet = null ) ->
   alphabet ?= me[ 'alphabet' ] ? 'unicode'
@@ -110,6 +117,30 @@ LODASH                    = CND.LODASH
       R = ( factor ) -> alphabet[ factor ] ? Infinity
     else
       throw new Error "illegal alphabet type #{rpr type}"
+  return R
+
+#-----------------------------------------------------------------------------------------------------------
+@add_positions = ( me, positioner = null ) ->
+  ### TAINT consider to update or delete factors instead ###
+  throw new Error "unable to position another time" if me[ 'is-positioned' ]
+  throw new Error "must first add weights" unless me[ 'weights' ]?
+  positioner       ?= @_get_positioner me, positioner
+  for weights_list in me[ 'weights' ]
+    for weight, idx in weights_list
+      xxx
+  return me
+
+#-----------------------------------------------------------------------------------------------------------
+@_get_positioner = ( me, positioner = null ) ->
+  positioner ?= me[ 'positioner' ] ? 'characters'
+  switch type = CND.type_of positioner
+    when 'function'
+      R = positioner
+    when 'text'
+      R = @positioners[ positioner ]
+      throw new Error "unknown positioner name #{rpr positioner}" unless R?
+    else
+      throw new Error "illegal positioner type #{rpr type}"
   return R
 
 
