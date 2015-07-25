@@ -59,6 +59,9 @@ a b c d e f g h i j k l m n o p q r s t u v w x y z
 call
 """
 
+text = """a e costarica america abcde acute ab ac ad"""
+text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca"""
+
 # text = """
 # all
 # call
@@ -93,7 +96,7 @@ unique_words_from_text = ( text, max_length = Infinity ) ->
 # factors_from_word = ( word ) -> TEXT.split word
 
 #-----------------------------------------------------------------------------------------------------------
-@index = ( factoentries, factorizer = null ) ->
+factorize = ( entries, factorizer = null ) ->
   factorizer ?= TEXT.split.bind TEXT
   return ( [ ( factorizer entry ), entry, ] for entry in entries )
 
@@ -107,7 +110,7 @@ find_longest_word = ( words ) ->
 _reverse = ( text ) -> ( TEXT.split text ).reverse().join ''
 
 #-----------------------------------------------------------------------------------------------------------
-add_lineups = ( words, max_lc, width ) ->
+add_lineups = ( factors_and_entries, max_lc, width ) ->
   # padding_width       = max_lc - 1
   padding_width       = ( width - 1 ) / 2
   right_padding_width = width               + padding_width
@@ -115,21 +118,23 @@ add_lineups = ( words, max_lc, width ) ->
   help 'padding_width:       ', padding_width
   help 'right_padding_width: ', right_padding_width
   help 'left_padding_width:  ', left_padding_width
-  for [ word, chrs, ], word_idx in words
-    last_idx = chrs.length - 1 + padding_width
-    chrs.push     ' ' while chrs.length < right_padding_width
-    chrs.unshift  ' ' while chrs.length <  left_padding_width
+  #.........................................................................................................
+  for [ factors, word, ], word_idx in factors_and_entries
+    last_idx = factors.length - 1 + padding_width
+    factors.push     ' ' while factors.length < right_padding_width
+    factors.unshift  ' ' while factors.length <  left_padding_width
     permutations = []
     for idx in [ padding_width .. last_idx ]
-      infix     = chrs[ idx ]
-      suffix    = chrs[ idx + 1 .. idx + padding_width ].join ''
-      prefix_A  = chrs[ idx - padding_width .. idx - 1 ].join ''
+      infix     = factors[ idx ]
+      suffix    = factors[ idx + 1 .. idx + padding_width ].join ''
+      prefix_A  = factors[ idx - padding_width .. idx - 1 ].join ''
       ### TAINT to be replaced by principled implementation ###
       prefix_B  = _reverse prefix_A
       # permutations.push [ infix, prefix_B, suffix, prefix_A, ].join ','
       permutations.push [ infix, suffix, prefix_B, prefix_A, ].join ','
-    words[ word_idx ][ 1 ] = permutations
-  return words
+    factors_and_entries[ word_idx ][ 1 ] = permutations
+  #.........................................................................................................
+  return factors_and_entries
 
 #-----------------------------------------------------------------------------------------------------------
 permute = ( words ) ->
@@ -159,18 +164,13 @@ report = ( permutations ) ->
 ###
 resolve_letters words
 # words         = exclude_long_words words
-max_lc        = find_longest_word words
-width         = 2 * ( max_lc - 1 ) + 1
-words         = add_lineups words, max_lc, width
-permutations  = permute words
-report permutations
 ###
 
 
 ############################################################################################################
 unless module.parent?
   kwic    = KWIC.new_kwic()
-  entries = unique_words_from_text text, 3
+  entries = unique_words_from_text text
   KWIC.add kwic, entry for entry in entries
   alphabet = [
     'a', 'b', 'c', 'd',
@@ -180,14 +180,26 @@ unless module.parent?
     'u', 'v', 'w', 'x', 'y', 'z',
     ]
   KWIC.factorize kwic
-  debug '©CiqNH', kwic
   KWIC.add_weights kwic
-  debug '©CiqNH', kwic
+  KWIC.permute kwic
+  KWIC.sort kwic
 
+  for [ key, weight_idx, weights, positions, lineup, entry, ] in kwic[ 'facets' ]
+    [ prefix, infix, suffix, ] = lineup
+    prefix.unshift ' ' until prefix.length >= 10
+    suffix.push    ' ' until suffix.length >= 10
+    prefix    = prefix.join ''
+    suffix    = suffix.join ''
+    weights   = weights.join '-'
+    positions = positions.join '-'
+    help prefix + '|' + infix + suffix, entry, weights, positions
 
-
-
-
+  # factors_and_entries = factorize entries
+  # max_lc              = find_longest_word factors_and_entries
+  # width               = 2 * ( max_lc - 1 ) + 1
+  # entries_and_lineups = add_lineups factors_and_entries, max_lc, width
+  # permutations        = permute entries_and_lineups
+  # report permutations
 
 
 
