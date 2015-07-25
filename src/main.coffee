@@ -130,13 +130,13 @@ LODASH                    = CND.LODASH
   permutations  = me[ 'permutations' ] = []
   ### TAINT actually a `max-length` of 1 should be fine ###
   throw new Error "unable to permute with max length of #{me[ 'max-length' ]}" if me[ 'max-length' ] < 2
-  width               = 2 * ( me[ 'max-length' ] - 1 ) + 1
-  padding_width       = ( width - 1 ) / 2
-  right_padding_width = width               + padding_width
-  left_padding_width  = right_padding_width + padding_width
-  help 'padding_width:       ', padding_width
-  help 'right_padding_width: ', right_padding_width
-  help 'left_padding_width:  ', left_padding_width
+  # width               = 2 * ( me[ 'max-length' ] - 1 ) + 1
+  # padding_width       = ( width - 1 ) / 2
+  # right_padding_width = width               + padding_width
+  # left_padding_width  = right_padding_width + padding_width
+  # help 'padding_width:       ', padding_width
+  # help 'right_padding_width: ', right_padding_width
+  # help 'left_padding_width:  ', left_padding_width
   #.........................................................................................................
   for weights, weight_idx in me[ 'weights' ]
     weights           = weights[ .. ]
@@ -171,7 +171,8 @@ LODASH                    = CND.LODASH
     permutation_list = me[ 'permutations' ][ entry_idx ]
     for [ weights, positions, lineup, ], weight_idx in permutation_list
       # debug '©8H2oL', ( weights.concat positions ), entry
-      key = CODEC.encode weights.concat positions
+      key = CODEC.encode weights
+      # key = CODEC.encode weights.concat positions
       facets.push [ key, weight_idx, weights, positions, lineup, entry, ]
   #.........................................................................................................
   facets.sort ( a, b ) ->
