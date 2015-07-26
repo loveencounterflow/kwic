@@ -61,6 +61,32 @@ call
 
 # text = """a e costarica america abcde acute ab ac ad"""
 text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca cad cabs cabdriver"""
+text = """
+abcd
+abdc
+acbd
+acdb
+adbc
+adcb
+bacd
+badc
+bcad
+bcda
+bdac
+bdca
+cabd
+cadb
+cbad
+cbda
+cdab
+cdba
+dabc
+dacb
+dbac
+dbca
+dcab
+dcba
+a b c ab ac ba bc ca cb abc acb cab cba bac bca cad cabs cabdriver"""
 # text = """a b c ab ac"""
 
 # text = """
@@ -110,7 +136,14 @@ unless module.parent?
   KWIC.report collection
 
 
-
+  # demo_permute = ->
+  #   d   = [ 'a', 'b', 'c', 'd', ]
+  #   nr  = 0
+  #   loop
+  #     nr += +1
+  #     help nr, d.join ''
+  #     break unless CND.ez_permute d
+  # demo_permute()
 
 
 
