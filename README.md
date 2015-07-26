@@ -157,7 +157,7 @@ separation between what was called above the *prefix* and the *infix*, with the
 top to bottom along said line, you will observe that
 
 **(1)**—all the infixes are listed in alphabetical order (actually, in a simplified
-    version of that, namely, Unicode lexicographic order);
+    version of that, Unicode lexicographical order);
 
 **(2)**—all the suffixes, likewise, are in alphabetical order, so that
 
@@ -167,19 +167,20 @@ top to bottom along said line, you will observe that
 **(4)**—Wherever a new group of a given infix (index letter) starts, the sole
     letter always comes first, *followed by all those entries that* **end** *in
     that letter*; this is a corollary of the previous points (and happens to be
-    [in agreement with how the shown *Bibliography* is
-    sorted](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA126#v=onepage&q=computer%20language&f=false)).
+    [in agreement with how the *Bibliography* treats
+    this case](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA126#v=onepage&q=computer%20language&f=false)).
 
 **(5)**—After the words that end with the index letter come the ones that *start*
     with that letter, short ones with letters early in the alphabet (`a`, `b`, ...)
-    occurring first; these in turn—and now it gets interesting—are followed by
+    occurring first.
 
-**(6)**—those words that contain the infix and are *preceded* by one or more
-    letters, and here the rule is again that short words and early letters sort
-    first, *but in the prefix, power of ordering counts* **backwards** *from the
-    infix at the right down to the start of the prefix on the left*. The effect
-    is that for any given run of a common infix and suffix, same letters to the
-    left of the vertical line have a tendency to form secondary clusters.
+**(6)**—These in turn—and now it gets interesting—are followed by those words
+    that contain the infix and are *preceded* by one or more letters, and here
+    the rule is again that short words and early letters sort first, *but in the
+    prefix, power of ordering counts* **backwards** *from the infix at the right
+    down to the start of the prefix on the left*. The effect is that for any
+    given run of a common infix and suffix, same letters to the left of the
+    vertical line have a tendency to form secondary clusters.
 
     Prefixes cannot possibly all cluster together as long as we stick to
     granting the suffix priority in sorting; after all, a list of items still
