@@ -165,7 +165,7 @@ top to bottom along said line, you will observe that
     letters in this case) are always neatly clustered.
 
 **(4)**—wherever a new group of a given infix (index letter) starts, the sole
-    letter always comes first, *followed by all those entries that **end** in
+    letter always comes first, *followed by all those entries that* **end** *in
     that letter*; this is a corrollary of the previous points (and happens to be
     [in agreement with how the shown *Bibliography* is
     sorted](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA126#v=onepage&q=computer%20language&f=false)).
