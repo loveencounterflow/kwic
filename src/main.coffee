@@ -47,9 +47,6 @@ LODASH                    = CND.LODASH
   return R
 
 #-----------------------------------------------------------------------------------------------------------
-@filler = Symbol '-'
-
-#-----------------------------------------------------------------------------------------------------------
 @add = ( me, entry ) ->
   ### TAINT consider to update or delete factors instead ###
   throw new Error "unable to add entries after factorization" if me[ 'factors' ]?
@@ -122,17 +119,18 @@ LODASH                    = CND.LODASH
     target            = []
     permutation_count = weights.length
     permutations.push target
-    weights.push    -Infinity
-    for idx in [ 0 ... permutation_count ]
-      prefix    = factors[ ... idx ]
-      infix     = factors[ idx ]
-      suffix    = factors[ idx + 1 .. ]
-      ### !!!!!!!!!!!!!!!!!! ###
-      idx_X = weights.indexOf -Infinity
-      weights_X = weights[ .. idx_X ].concat weights[ idx_X + 1 .. ].reverse()
-      target.push [ weights_X, [ prefix, infix, suffix, ], ]
-      ### !!!!!!!!!!!!!!!!!! ###
-      # target.push [ weights, [ prefix, infix, suffix, ], ]
+    weights.push -Infinity
+    for infix_idx in [ 0 ... permutation_count ]
+      prefix    = factors[ ... infix_idx ]
+      infix     = factors[ infix_idx ]
+      suffix    = factors[ infix_idx + 1 .. ]
+      ### Here we reverse the order of weights in the 'suffix' part of the weights (the part that comes
+      behind the guard value); this means that both prefix and suffix weights that are closer to the
+      infix have a stronger influence on the sorting than those that are further away. ###
+      r_idx     = permutation_count - infix_idx
+      r_weights = weights[ .. r_idx ].concat weights[ r_idx + 1 .. ].reverse()
+      target.push [ r_weights, [ prefix, infix, suffix, ], ]
+      #.....................................................................................................
       weights   = weights[ .. ]
       @_rotate_left weights
   #.........................................................................................................

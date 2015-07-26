@@ -60,7 +60,8 @@ call
 """
 
 # text = """a e costarica america abcde acute ab ac ad"""
-# text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca cad"""
+text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca cad cadeaux kado"""
+# text = """a b c ab ac"""
 
 # text = """
 # all
@@ -158,13 +159,9 @@ report = ( permutations ) ->
     # lineup                                  = prefix_A + '' + infix + '|' + suffix
     [ infix, suffix, prefix_B, prefix_A, ]  = lineup.split ','
     lineup                                  = prefix_A + '|' + infix + '' + suffix
-    help lineup, ' ', word
+    help lineup #, ' ', word
   return null
 
-###
-resolve_letters words
-# words         = exclude_long_words words
-###
 
 
 ############################################################################################################
@@ -191,7 +188,7 @@ unless module.parent?
     prefix    = prefix.join ''
     suffix    = suffix.join ''
     weights   = weights.join '-'
-    help prefix + '|' + infix + suffix, entry, weights
+    urge prefix + '|' + infix + suffix, entry, weights
 
   # factors_and_entries = factorize entries
   # max_lc              = find_longest_word factors_and_entries
@@ -200,9 +197,17 @@ unless module.parent?
   # permutations        = permute entries_and_lineups
   # report permutations
 
-
-
-
+  s_KWIC      = require './short'
+  entries     = unique_words_from_text text
+  collection  = []
+  for entry in entries
+    factors       = s_KWIC.get_factors      entry
+    weights       = s_KWIC.get_weights      factors
+    permutations  = s_KWIC.get_permutations factors, weights
+    collection.push [ permutations, entry, ]
+    for permutation in permutations
+      [ r_weights, infix, suffix, prefix, ] = permutation
+  s_KWIC.report collection
 
 
 
