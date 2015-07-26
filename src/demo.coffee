@@ -59,8 +59,8 @@ a b c d e f g h i j k l m n o p q r s t u v w x y z
 call
 """
 
-text = """a e costarica america abcde acute ab ac ad"""
-text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca"""
+# text = """a e costarica america abcde acute ab ac ad"""
+# text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca cad"""
 
 # text = """
 # all
@@ -184,15 +184,14 @@ unless module.parent?
   KWIC.permute kwic
   KWIC.sort kwic
 
-  for [ key, weight_idx, weights, positions, lineup, entry, ] in kwic[ 'facets' ]
+  for [ key, weight_idx, weights, lineup, entry, ] in kwic[ 'facets' ]
     [ prefix, infix, suffix, ] = lineup
     prefix.unshift ' ' until prefix.length >= 10
     suffix.push    ' ' until suffix.length >= 10
     prefix    = prefix.join ''
     suffix    = suffix.join ''
     weights   = weights.join '-'
-    positions = positions.join '-'
-    help prefix + '|' + infix + suffix, entry, weights, positions
+    help prefix + '|' + infix + suffix, entry, weights
 
   # factors_and_entries = factorize entries
   # max_lc              = find_longest_word factors_and_entries
