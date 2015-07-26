@@ -8,6 +8,18 @@
 # kwic
 Keywords In Context
 
+> **KWIC** is an acronym for **Key Word In Context**, the most common format for
+> [concordance](https://en.wikipedia.org/wiki/Concordance_(publishing)) lines.
+> The term KWIC was first coined by [Hans Peter
+> Luhn](https://en.wikipedia.org/wiki/Hans_Peter_Luhn).[<sup>[1]</sup>](https://en.wikipedia.org/wiki/Key_Word_in_Context#cite_note-1)
+> The system was based on a concept called *keyword in titles* which was first
+> proposed for Manchester libraries in 1864 by [Andrea
+> Crestadoro](https://en.wikipedia.org/wiki/Andrea_Crestadoro).[<sup>[2]</sup>](https://en.wikipedia.org/wiki/Key_Word_in_Context#cite_note-index-2)
+
+There is a rather obscure UNIX utility by the name of
+[`ptx`](https://en.wikipedia.org/wiki/Ptx_%28Unix%29) and an even more obscure
+GNU version of the same,
+[`gptx`](http://www.math.utah.edu/docs/info/gptx_1.html). I
 
 [*Computer Literature Bibliography: 1946 to 1963*, page 129](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA129#v=onepage&q=computer%20language&f=false)
 
