@@ -182,12 +182,12 @@ top to bottom along said line, you will observe that
     given run of a common infix and suffix, same letters to the left of the
     vertical line have a tendency to form secondary clusters.
 
-    Prefixes cannot possibly all cluster together as long as we stick to
-    granting the suffix priority in sorting; after all, a list of items still
-    has only a single dimension and, hence, neighborhood has only two
-    positions. This is why you see `c|b` and `ac|b` right next to each other,
-    but `c|ba`, which also has the sequence `c|b`, is separated by `|ba` (and
-    had we included, say, `bank` and `bar`, those would likewise intervene).
+> Prefixes cannot possibly all cluster together as long as we stick to
+> granting the suffix priority in sorting; after all, a list of items still
+> has only a single dimension and, hence, neighborhood has only two
+> positions. This is why you see `c|b` and `ac|b` right next to each other,
+> but `c|ba`, which also has the sequence `c|b`, is separated by `|ba` (and
+> had we included, say, `bank` and `bar`, those would likewise intervene).
 
 ## Related Software
 
