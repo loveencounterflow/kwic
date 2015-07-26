@@ -9,63 +9,27 @@
 #...........................................................................................................
 CND                       = require 'cnd'
 rpr                       = CND.rpr
-badge                     = 'kwic'
-log                       = CND.get_logger 'plain',     badge
-info                      = CND.get_logger 'info',      badge
-whisper                   = CND.get_logger 'whisper',   badge
-alert                     = CND.get_logger 'alert',     badge
-debug                     = CND.get_logger 'debug',     badge
-warn                      = CND.get_logger 'warn',      badge
+badge                     = 'KWIC'
+# log                       = CND.get_logger 'plain',     badge
+# info                      = CND.get_logger 'info',      badge
+# whisper                   = CND.get_logger 'whisper',   badge
+# alert                     = CND.get_logger 'alert',     badge
+# debug                     = CND.get_logger 'debug',     badge
+# warn                      = CND.get_logger 'warn',      badge
 help                      = CND.get_logger 'help',      badge
-urge                      = CND.get_logger 'urge',      badge
+# urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
 TEXT                      = require 'coffeenode-text'
 CODEC                     = require 'hollerith-codec'
-LODASH                    = CND.LODASH
 
 
 #-----------------------------------------------------------------------------------------------------------
-@new_kwic = ( settings ) ->
-  factorizer  = settings?[ 'factorizer' ] ? null
-  alphabet    = settings?[ 'alphabet'   ] ? null
-  #.........................................................................................................
-  R =
-    '~isa':               'KWIC/base'
-    'entries':            null
-    'factors':            null
-    'factorizer':         factorizer
-    'alphabet':           alphabet
-    'weights':            null
-    'permutations':       null
-    'facets':             null
-  #.........................................................................................................
-  if ( entries = settings?[ 'entries' ] )?
-    @add R, entry for entry in entries
-    if alphabet?
-      @factorize
-  #.........................................................................................................
-  return R
+@get_factors = ( entry, factorizer = null ) ->
+  factorizer ?= @_get_factorizer factorizer
+  return factorizer entry
 
 #-----------------------------------------------------------------------------------------------------------
-@add = ( me, entry ) ->
-  ### TAINT consider to update or delete factors instead ###
-  throw new Error "unable to add entries after factorization" if me[ 'factors' ]?
-  ( me[ 'entries' ]?= [] ).push entry
-  return me
-
-#-----------------------------------------------------------------------------------------------------------
-@factorize = ( me, factorizer = null ) ->
-  ### TAINT consider to update or delete factors instead ###
-  throw new Error "unable to factorize another time" if me[ 'factors' ]?
-  me[ 'factors' ]   = []
-  factorizer       ?= @_get_factorizer me, factorizer
-  for entry in me[ 'entries' ]
-    me[ 'factors' ].push factor_list = factorizer entry
-  return me
-
-#-----------------------------------------------------------------------------------------------------------
-@_get_factorizer = ( me, factorizer = null ) ->
-  factorizer ?= me[ 'factorizer' ] ? 'characters'
+@_get_factorizer = ( factorizer = 'characters' ) ->
   switch type = CND.type_of factorizer
     when 'function'
       R = factorizer
@@ -77,20 +41,12 @@ LODASH                    = CND.LODASH
   return R
 
 #-----------------------------------------------------------------------------------------------------------
-@add_weights = ( me, alphabet = null ) ->
-  ### TAINT consider to factorize transparently ###
-  throw new Error "unable to add weights before factorization" unless me[ 'factors' ]?
-  ### TAINT consider to update or delete weights instead ###
-  throw new Error "unable to factorize another time" if me[ 'weights' ]?
-  weighter          = @_get_weighter me, alphabet
-  me[ 'weights' ]   = []
-  for factor_list in me[ 'factors' ]
-    me[ 'weights' ].push ( weighter factor for factor in factor_list )
-  return me
+@get_weights = ( factors, alphabet = 'unicode' ) ->
+  weighter          = @_get_weighter alphabet
+  return ( weighter factor for factor in factors )
 
 #-----------------------------------------------------------------------------------------------------------
-@_get_weighter = ( me, alphabet = null ) ->
-  alphabet ?= me[ 'alphabet' ] ? 'unicode'
+@_get_weighter = ( alphabet = 'unicode' ) ->
   switch type = CND.type_of alphabet
     when 'function'
       R = alphabet
@@ -107,55 +63,72 @@ LODASH                    = CND.LODASH
   return R
 
 #-----------------------------------------------------------------------------------------------------------
-@permute = ( me ) ->
-  ### TAINT consider to update or delete factors instead ###
-  throw new Error "unable to permute before adding weights" unless me[ 'weights' ]?
-  throw new Error "unable to permute another time" if me[ 'permutations' ]?
-  permutations  = me[ 'permutations' ] = []
+@get_permutations = ( factors, weights ) ->
+  R = []
   #.........................................................................................................
-  for weights, weight_idx in me[ 'weights' ]
-    weights           = weights[ .. ]
-    factors           = me[ 'factors' ][ weight_idx ]
-    target            = []
-    permutation_count = weights.length
-    permutations.push target
-    weights.push -Infinity
-    for infix_idx in [ 0 ... permutation_count ]
-      prefix    = factors[ ... infix_idx ]
-      infix     = factors[ infix_idx ]
-      suffix    = factors[ infix_idx + 1 .. ]
-      ### Here we reverse the order of weights in the 'suffix' part of the weights (the part that comes
-      behind the guard value); this means that both prefix and suffix weights that are closer to the
-      infix have a stronger influence on the sorting than those that are further away. ###
-      r_idx     = permutation_count - infix_idx
-      r_weights = weights[ .. r_idx ].concat weights[ r_idx + 1 .. ].reverse()
-      target.push [ r_weights, [ prefix, infix, suffix, ], ]
-      #.....................................................................................................
-      weights   = weights[ .. ]
-      @_rotate_left weights
+  weights           = weights[ .. ]
+  permutation_count = weights.length
+  weights.push -Infinity
+  for infix_idx in [ 0 ... permutation_count ]
+    prefix    = factors[ ... infix_idx ]
+    infix     = factors[ infix_idx ]
+    suffix    = factors[ infix_idx + 1 .. ]
+    ### Here we reverse the order of weights in the 'suffix' part of the weights (the part that comes
+    behind the guard value); this means that both prefix and suffix weights that are closer to the
+    infix have a stronger influence on the sorting than those that are further away. ###
+    r_idx     = permutation_count - infix_idx
+    r_weights = weights[ .. r_idx ].concat weights[ r_idx + 1 .. ].reverse()
+    R.push [ r_weights, infix, suffix, prefix, ]
+    #.....................................................................................................
+    # weights   = weights[ .. ]
+    @_rotate_left weights
   #.........................................................................................................
-  return me
+  return R
 
 #-----------------------------------------------------------------------------------------------------------
-@sort = ( me ) ->
-  ### TAINT consider to update or delete factors instead ###
-  throw new Error "unable to sort before permuting" unless me[ 'permutations' ]?
-  throw new Error "unable to sort another time" if me[ 'facets' ]?
-  facets = me[ 'facets' ] = []
+@permute = ( entry, settings ) ->
+  factorizer  = settings?[ 'factorizer' ] ? null
+  alphabet    = settings?[ 'alphabet'   ] ? null
+  factors     = @get_factors   entry,   factorizer
+  weights     = @get_weights   factors, alphabet
+  return @get_permutations factors, weights
+
+#-----------------------------------------------------------------------------------------------------------
+@sort = ( collection ) ->
+  facets = []
   #.........................................................................................................
-  for entry, entry_idx in me[ 'entries' ]
-    permutation_list = me[ 'permutations' ][ entry_idx ]
-    for [ weights, lineup, ], weight_idx in permutation_list
-      key = CODEC.encode weights
-      facets.push [ key, weight_idx, weights, lineup, entry, ]
+  for [ permutations, entry, ] in collection
+    for key in permutations
+      bkey = CODEC.encode key
+      facets.push [ bkey, key, entry, ]
+  facets.sort ( a, b ) -> a[ 0 ].compare b[ 0 ]
   #.........................................................................................................
-  facets.sort ( a, b ) ->
-    return R unless ( R = a[ 0 ].compare b[ 0 ] ) is 0
-    return +1 if a[ 1 ] > b[ 1 ]
-    return -1 if a[ 1 ] < b[ 1 ]
-    return  0
+  return ( [ prefix, infix, suffix, entry, ] for [ _, [ _, infix, suffix, prefix, ], entry, ] in facets )
+
+#-----------------------------------------------------------------------------------------------------------
+@report = ( collection, settings ) ->
+  padder    = settings?[ 'padder'    ] ? ' '
+  separator = settings?[ 'separator' ] ? '|'
+  joiner    = settings?[ 'joiner'    ] ? ''
+  show      = if process.stdout.isTTY then help else echo
   #.........................................................................................................
-  return me
+  lineups_and_entries = @sort collection
+  #.........................................................................................................
+  max_length          = -Infinity
+  for [ prefix, infix, suffix, entry, ] in lineups_and_entries
+    max_length = Math.max max_length, prefix.length
+  #.........................................................................................................
+  for [ prefix, infix, suffix, entry, ] in lineups_and_entries
+    prefix    = prefix[ ... ]
+    suffix    = suffix[ ... ]
+    prefix.unshift padder until prefix.length is max_length
+    suffix.push    padder until suffix.length is max_length
+    prefix    = prefix.join joiner
+    suffix    = suffix.join joiner
+    entry     = if CND.isa_text entry then entry else rpr entry
+    show prefix + separator + infix + suffix + padder + entry
+  #.........................................................................................................
+  return null
 
 
 #===========================================================================================================
@@ -174,20 +147,14 @@ LODASH                    = CND.LODASH
 #===========================================================================================================
 # HELPERS
 #-----------------------------------------------------------------------------------------------------------
-@_rotate_right = ( list ) ->
-  return list if list.length < 2
-  list.unshift list.pop()
-  return list
-
-#-----------------------------------------------------------------------------------------------------------
 @_rotate_left = ( list ) ->
   return list if list.length < 2
   list.push list.shift()
   return list
 
-###
-entries
-entries (what is being indexed)
-alphabet (what is used to index)
-###
+# #-----------------------------------------------------------------------------------------------------------
+# @_rotate_right = ( list ) ->
+#   return list if list.length < 2
+#   list.unshift list.pop()
+#   return list
 

@@ -9,7 +9,7 @@
 #...........................................................................................................
 CND                       = require 'cnd'
 rpr                       = CND.rpr
-badge                     = 'kwic'
+badge                     = 'KWIC/demo'
 log                       = CND.get_logger 'plain',     badge
 info                      = CND.get_logger 'info',      badge
 whisper                   = CND.get_logger 'whisper',   badge
@@ -80,134 +80,34 @@ text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca cad cadeaux kado"""
 # """
 
 #-----------------------------------------------------------------------------------------------------------
-exclude_long_words = ( words, max_length = Infinity ) ->
-  return words[ .. ] if max_length is Infinity
-  ### TAINT uses code units, not character count ###
-  return words.filter ( word ) => word.length <= max_length
-
-#-----------------------------------------------------------------------------------------------------------
-unique_words_from_text = ( text, max_length = Infinity ) ->
+unique_words_from_text = ( text ) ->
   words = text.split /\s+/
   words = ( word for word in words when word.length > 0 )
   words.sort()
-  words = LODASH.uniq words, true
-  return exclude_long_words words, max_length
-
-#-----------------------------------------------------------------------------------------------------------
-# factors_from_word = ( word ) -> TEXT.split word
-
-#-----------------------------------------------------------------------------------------------------------
-factorize = ( entries, factorizer = null ) ->
-  factorizer ?= TEXT.split.bind TEXT
-  return ( [ ( factorizer entry ), entry, ] for entry in entries )
-
-#-----------------------------------------------------------------------------------------------------------
-find_longest_word = ( words ) ->
-  R = -Infinity
-  R = Math.max R, chrs.length for [ _, chrs, ] in words
-  return R
-
-#-----------------------------------------------------------------------------------------------------------
-_reverse = ( text ) -> ( TEXT.split text ).reverse().join ''
-
-#-----------------------------------------------------------------------------------------------------------
-add_lineups = ( factors_and_entries, max_lc, width ) ->
-  # padding_width       = max_lc - 1
-  padding_width       = ( width - 1 ) / 2
-  right_padding_width = width               + padding_width
-  left_padding_width  = right_padding_width + padding_width
-  help 'padding_width:       ', padding_width
-  help 'right_padding_width: ', right_padding_width
-  help 'left_padding_width:  ', left_padding_width
-  #.........................................................................................................
-  for [ factors, word, ], word_idx in factors_and_entries
-    last_idx = factors.length - 1 + padding_width
-    factors.push     ' ' while factors.length < right_padding_width
-    factors.unshift  ' ' while factors.length <  left_padding_width
-    permutations = []
-    for idx in [ padding_width .. last_idx ]
-      infix     = factors[ idx ]
-      suffix    = factors[ idx + 1 .. idx + padding_width ].join ''
-      prefix_A  = factors[ idx - padding_width .. idx - 1 ].join ''
-      ### TAINT to be replaced by principled implementation ###
-      prefix_B  = _reverse prefix_A
-      # permutations.push [ infix, prefix_B, suffix, prefix_A, ].join ','
-      permutations.push [ infix, suffix, prefix_B, prefix_A, ].join ','
-    factors_and_entries[ word_idx ][ 1 ] = permutations
-  #.........................................................................................................
-  return factors_and_entries
-
-#-----------------------------------------------------------------------------------------------------------
-permute = ( words ) ->
-  R = []
-  #.........................................................................................................
-  for [ word, lineups, ] in words
-    for lineup in lineups
-      R.push [ lineup, word, ]
-  #.........................................................................................................
-  R.sort ( a, b ) ->
-    return +1 if a[ 0 ] > b[ 0 ]
-    return -1 if a[ 0 ] < b[ 0 ]
-    return  0
-  #.........................................................................................................
-  return R
-
-#-----------------------------------------------------------------------------------------------------------
-report = ( permutations ) ->
-  for [ lineup, word, ] in permutations
-    # [ infix, prefix_B, suffix, prefix_A, ]  = lineup.split ','
-    # lineup                                  = prefix_A + '' + infix + '|' + suffix
-    [ infix, suffix, prefix_B, prefix_A, ]  = lineup.split ','
-    lineup                                  = prefix_A + '|' + infix + '' + suffix
-    help lineup #, ' ', word
-  return null
-
+  return LODASH.uniq words, true
 
 
 ############################################################################################################
 unless module.parent?
-  kwic    = KWIC.new_kwic()
-  entries = unique_words_from_text text
-  KWIC.add kwic, entry for entry in entries
-  alphabet = [
-    'a', 'b', 'c', 'd',
-    'e', 'f', 'g', 'h',
-    'i', 'j', 'k', 'l', 'm', 'n',
-    'o', 'p', 'q', 'r', 's', 't',
-    'u', 'v', 'w', 'x', 'y', 'z',
-    ]
-  KWIC.factorize kwic
-  KWIC.add_weights kwic
-  KWIC.permute kwic
-  KWIC.sort kwic
-
-  for [ key, weight_idx, weights, lineup, entry, ] in kwic[ 'facets' ]
-    [ prefix, infix, suffix, ] = lineup
-    prefix.unshift ' ' until prefix.length >= 10
-    suffix.push    ' ' until suffix.length >= 10
-    prefix    = prefix.join ''
-    suffix    = suffix.join ''
-    weights   = weights.join '-'
-    urge prefix + '|' + infix + suffix, entry, weights
-
-  # factors_and_entries = factorize entries
-  # max_lc              = find_longest_word factors_and_entries
-  # width               = 2 * ( max_lc - 1 ) + 1
-  # entries_and_lineups = add_lineups factors_and_entries, max_lc, width
-  # permutations        = permute entries_and_lineups
-  # report permutations
-
-  s_KWIC      = require './short'
   entries     = unique_words_from_text text
   collection  = []
   for entry in entries
-    factors       = s_KWIC.get_factors      entry
-    weights       = s_KWIC.get_weights      factors
-    permutations  = s_KWIC.get_permutations factors, weights
+    factors       = KWIC.get_factors      entry
+    weights       = KWIC.get_weights      factors
+    permutations  = KWIC.get_permutations factors, weights
     collection.push [ permutations, entry, ]
     for permutation in permutations
       [ r_weights, infix, suffix, prefix, ] = permutation
-  s_KWIC.report collection
+  KWIC.report collection
+
+  echo()
+  entries     = unique_words_from_text text
+  collection  = []
+  for entry in entries
+    collection.push [ ( KWIC.permute entry ), entry, ]
+    # for permutation in permutations
+    #   [ r_weights, infix, suffix, prefix, ] = permutation
+  KWIC.report collection
 
 
 
