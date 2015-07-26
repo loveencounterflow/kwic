@@ -60,7 +60,7 @@ call
 """
 
 # text = """a e costarica america abcde acute ab ac ad"""
-text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca cad cadeaux kado"""
+text = """a b c ab ac ba bc ca cb abc acb cab cba bac bca cad cabs cabdriver"""
 # text = """a b c ab ac"""
 
 # text = """
