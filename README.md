@@ -88,55 +88,55 @@ with `npm install kwic`. When you then do `node --harmony lib/demo.js`, you
 will be greeted with the following output:
 
 ```
-                    |a         a
-                   b|a         ba
-                  cb|a         cba
-                   c|a         ca
-                  bc|a         bca
-                    |ab        ab
-                   c|ab        cab
-                    |abc       abc
-                   c|abdriver  cabdriver
-                   c|abs       cabs
-                    |ac        ac
-                   b|ac        bac
-                    |acb       acb
-                   c|ad        cad
-                    |b         b
-                   a|b         ab
-                  ca|b         cab
-                   c|b         cb
-                  ac|b         acb
-                    |ba        ba
-                   c|ba        cba
-                    |bac       bac
-                    |bc        bc
-                   a|bc        abc
-                    |bca       bca
-                  ca|bdriver   cabdriver
-                  ca|bs        cabs
-                    |c         c
-                   a|c         ac
-                  ba|c         bac
-                   b|c         bc
-                  ab|c         abc
-                    |ca        ca
-                   b|ca        bca
-                    |cab       cab
-                    |cabdriver cabdriver
-                    |cabs      cabs
-                    |cad       cad
-                    |cb        cb
-                   a|cb        acb
-                    |cba       cba
-                  ca|d         cad
-                 cab|driver    cabdriver
-             cabdriv|er        cabdriver
-               cabdr|iver      cabdriver
-            cabdrive|r         cabdriver
-                cabd|river     cabdriver
-                 cab|s         cabs
-              cabdri|ver       cabdriver
+                    |a         a                #  1
+                   b|a         ba               #  2
+                  cb|a         cba              #  3
+                   c|a         ca               #  4
+                  bc|a         bca              #  5
+                    |ab        ab               #  6
+                   c|ab        cab              #  7
+                    |abc       abc              #  8
+                   c|abdriver  cabdriver        #  9
+                   c|abs       cabs             # 10
+                    |ac        ac               # 11
+                   b|ac        bac              # 12
+                    |acb       acb              # 13
+                   c|ad        cad              # 14
+                    |b         b                # 15
+                   a|b         ab               # 16
+                  ca|b         cab              # 17
+                   c|b         cb               # 18
+                  ac|b         acb              # 19
+                    |ba        ba               # 20
+                   c|ba        cba              # 21
+                    |bac       bac              # 22
+                    |bc        bc               # 23
+                   a|bc        abc              # 24
+                    |bca       bca              # 25
+                  ca|bdriver   cabdriver        # 26
+                  ca|bs        cabs             # 27
+                    |c         c                # 28
+                   a|c         ac               # 29
+                  ba|c         bac              # 30
+                   b|c         bc               # 31
+                  ab|c         abc              # 32
+                    |ca        ca               # 33
+                   b|ca        bca              # 34
+                    |cab       cab              # 35
+                    |cabdriver cabdriver        # 36
+                    |cabs      cabs             # 37
+                    |cad       cad              # 38
+                    |cb        cb               # 39
+                   a|cb        acb              # 40
+                    |cba       cba              # 41
+                  ca|d         cad              # 42
+                 cab|driver    cabdriver        # 43
+             cabdriv|er        cabdriver        # 44
+               cabdr|iver      cabdriver        # 45
+            cabdrive|r         cabdriver        # 46
+                cabd|river     cabdriver        # 47
+                 cab|s         cabs             # 48
+              cabdri|ver       cabdriver        # 49
 ```
 
 The above is a KWIC-style permuted index of these 'words', chosen
@@ -165,7 +165,11 @@ top to bottom along said line, you will observe that
 **(2)**—all the suffixes, likewise, are in alphabetical order, so that
 
 **(3)**—all the co-occurrances of a given infix with all subsequent suffixes (trailing
-    letters in this case) are always neatly clustered.
+    letters in this case) are always neatly clustered. For example, all occurrances
+    of `|ca...` (infix `a` plus all the suffixes starting with an `a`) are
+    found on lines #33 thru #38 in the above output and nowhere else. The
+    inverse also holds: wherever the sequence `c`, 'a' occurs in the listing, it is
+    always a duplicate of one entry in said range, indexed by another letter.
 
 **(4)**—Wherever a new group of a given infix (index letter) starts, the sole
     letter always comes first, *followed by all those entries that* **end** *in
