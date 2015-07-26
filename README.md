@@ -1,12 +1,13 @@
 
 
-- [kwic](#kwic)
+- [KWIC](#kwic)
 
 > **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 
-# kwic
-Keywords In Context
+# KWIC
+Keywords In Context (KWIC) is a technique to produce indexes based on rotary permutations
+of the index linguistic material. According to *Wikipedia*:
 
 > **KWIC** is an acronym for **Key Word In Context**, the most common format for
 > [concordance](https://en.wikipedia.org/wiki/Concordance_(publishing)) lines.
@@ -16,14 +17,27 @@ Keywords In Context
 > proposed for Manchester libraries in 1864 by [Andrea
 > Crestadoro](https://en.wikipedia.org/wiki/Andrea_Crestadoro).[<sup>[2]</sup>](https://en.wikipedia.org/wiki/Key_Word_in_Context#cite_note-index-2)
 
+The best way to understand what the KWIC technique is all about is to skim
+through the pages of a classical KWIC index, of which [*Computer Literature
+Bibliography: 1946 to 1963*](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA129#v=onepage&q=computer%20language&f=false)
+is one example. Here's page 129 from that 1965 book:
+
+![*Computer Literature Bibliography: 1946 to 1963*, page 129](https://github.com/loveencounterflow/kwic/raw/master/art/kwic.png)
+
+This title word index goes on for over 309 pages. In the center of each page is
+the current keyword, from `A.C.E.` and `ABACUS` over `COMPUTER` to `ZURICH`,
+followed by numbers representing years and machine models. Each line represents
+the title of a book or article, and each keyword is surrounded by those words as
+appear in the referenced title, in the order they appear there (by contrast,
+other indexing methods are known to shuffle words around, as in `Man and the
+Sea, The Old`, in order to make *the* relevant item appear in the right place in
+the catalog; for the sake of space efficiency, long titles are wrapped around
+here, too, which, however, does not affect the sorting order).
+
 There is a rather obscure UNIX utility by the name of
 [`ptx`](https://en.wikipedia.org/wiki/Ptx_%28Unix%29) and an even more obscure
 GNU version of the same,
 [`gptx`](http://www.math.utah.edu/docs/info/gptx_1.html). I
-
-[*Computer Literature Bibliography: 1946 to 1963*, page 129](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA129#v=onepage&q=computer%20language&f=false)
-
-![*Computer Literature Bibliography: 1946 to 1963*, page 129](https://github.com/loveencounterflow/kwic/raw/master/art/kwic.png)
 
 ```
 a           ba          cab
