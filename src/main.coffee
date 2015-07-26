@@ -42,24 +42,32 @@ CODEC                     = require 'hollerith-codec'
 
 #-----------------------------------------------------------------------------------------------------------
 @get_weights = ( factors, alphabet = 'unicode' ) ->
-  weighter          = @_get_weighter alphabet
-  return ( weighter factor for factor in factors )
+  weighter  = @_get_weighter alphabet
+  R         = []
+  for factor in factors
+    R.push weight = weighter factor
+    throw new Error "factor not in alphabet: #{rpr factor}" if weight is undefined
+  return R
 
 #-----------------------------------------------------------------------------------------------------------
 @_get_weighter = ( alphabet = 'unicode' ) ->
   switch type = CND.type_of alphabet
+    #.......................................................................................................
     when 'function'
       R = alphabet
+    #.......................................................................................................
     when 'text'
       R = @alphabets[ alphabet ]
       throw new Error "unknown alphabet name #{rpr alphabet}" unless R?
+    #.......................................................................................................
     when 'list'
       alphabet_pod = {}
       do -> alphabet_pod[ factor ] = idx for factor, idx in alphabet
-      ### TAINT consider to throw error for unknown symbols ###
-      R = ( factor ) -> alphabet[ factor ] ? Infinity
+      R = ( factor ) -> alphabet[ factor ]
+    #.......................................................................................................
     else
       throw new Error "illegal alphabet type #{rpr type}"
+  #.........................................................................................................
   return R
 
 #-----------------------------------------------------------------------------------------------------------
