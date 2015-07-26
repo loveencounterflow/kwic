@@ -1,11 +1,17 @@
 
 
 - [KWIC](#kwic)
+	- [Key Words In Context and Concordances](#key-words-in-context-and-concordances)
+	- [Objective of the `kwic` module](#objective-of-the-kwic-module)
+	- [Related Software](#related-software)
 
 > **Table of Contents**  *generated with [DocToc](http://doctoc.herokuapp.com/)*
 
 
 # KWIC
+
+## Key Words In Context and Concordances
+
 Keywords In Context (KWIC) is a technique to produce indexes based on rotary permutations
 of the index linguistic material. According to *Wikipedia*:
 
@@ -28,25 +34,55 @@ This title word index goes on for over 309 pages. In the center of each page is
 the current keyword, from `A.C.E.` and `ABACUS` over `COMPUTER` to `ZURICH`,
 followed by numbers representing years and machine models. Each line represents
 the title of a book or article, and each keyword is surrounded by those words as
-appear in the referenced title, in the order they appear there (by contrast,
-other indexing methods are known to shuffle words around, as in `Man and the
-Sea, The Old`, in order to make *the* relevant item appear in the right place in
-the catalog; for the sake of space efficiency, long titles are wrapped around
-here, too, which, however, does not affect the sorting order).
+appear in the referenced title, in the order they appear there. At the end of
+each line, we find an abbreviation that identifies the publication and the page
+number where each title is to be found.
 
-There is a rather obscure UNIX utility by the name of
-[`ptx`](https://en.wikipedia.org/wiki/Ptx_%28Unix%29) and an even more obscure
-GNU version of the same,
-[`gptx`](http://www.math.utah.edu/docs/info/gptx_1.html). I
+> (by contrast, other indexing methods are known to shuffle words around, as in
+> `Man and the Sea, The Old`, in order to make *the* relevant item appear in the
+> right place in the catalog. For the sake of space efficiency, long titles are
+> wrapped around here, too; however, this does not affect the sorting order).
 
-```
-a           ba          cab
-ab          bac         cabdriver
-abc         bc          cabs
-ac          bca         cad
-acb         c           cb
-b           ca          cba
-```
+The benefits of the KWIC approach to indexing are immediately obvious: instead
+of having to guess where the librarian chose to place the index card for that
+edition of `The Old Man and the Sea` you're looking for (`Sea`? `Old`? `Man`?),
+you can look it up under each 'content' word. Also, you'll likely have an easier
+time to find works about related subjects where those share title words with
+your particular search.
+
+What's more, you get a collocational analysis of sorts for free, that is, given
+a comprehensive KWIC index covering titles (and maybe full texts) of a given
+field, you can gain an idea of what words go with which ones. The index as shown
+above is admittedly much better at showing occurrences of type `I+S` (where `I`
+is what you searched for, call it the *infix*, and `S` is what follows, call it
+the *suffix*) than for those of type `P+I` (where `P` is what precedes the
+infix, call it the *prefix*); this becomes clear when you compare the entries
+near `COMPUTER LANGUAGE` from the picture above with [the entries of pages
+225f.](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA225#v=onepage&q=language&f=false)
+of the same work: To the naked eye, the prefixes you might be interested in
+(say, `COMPUTER`, `PROGRAMMING` or `ALGORITHMIC`) are rather haphazardly strewn
+across the place, although some clusters do seem to occur (this, by the way, is
+a weakness of this particular index that we will address and try to remedy a
+little further down).
+
+The main downside of KWIC indexes is also apparent from the *Bibliography*:
+Whereas the register (where all the abbreviations of cited publications are
+listed) takes up roughly 70 and the author index roughly 80 pages, the KWIC
+index as such has no less than 305 pages, meaning each title appears around 4.5
+times on average. This can hardly be otherwise given that the objective of the
+KWIC index is exactly to file each title under each relevant term; however, it
+also helps to explain why printed KWIC indexes had, for the most part, to wait
+for computers to arrive and went out of fashion as soon as computers became
+capable of delivering documents online as well. Similarly,
+[concordances](https://de.wikipedia.org/wiki/Konkordanz) were only done for
+subjects and keywords deemed worthy the tremendous effort in terms of time and
+paper.
+
+## Objective of the `kwic` module
+
+`kwic` is a [NodeJS](http://nodejs.org) module; as such, you can install it
+with `npm install kwic`. When you then do `node --harmony lib/demo.js`, you
+will be greeted with the following output:
 
 ```
                     |a         a
@@ -100,12 +136,48 @@ b           ca          cba
               cabdri|ver       cabdriver
 ```
 
+The above is a KWIC-style permuted index of these 'words', chosen
+to display some charcteristics of the implemented algorithm:
+
+```
+a           ba          cab
+ab          bac         cabdriver
+abc         bc          cabs
+ac          bca         cad
+acb         c           cb
+b           ca          cba
+```
+First of all, the demo shows how to index *words* by their constituent *letters*
+(and not phrases by their constituent words, as the classical exemplar does);
+this is related to the particular intended use case, but configurable.
+
+Next, there's a vertical line in the output shown: this line indicates the
+separation between what was called above the *prefix* and the *infix*, with the
+*suffix* starting at the next position after the infix. Now when you read from
+top to bottom along said line, you will observe that
+
+**(1)**—all the infixes are listed in alphabetical order (actually, in a simplified
+    version of that, namely, Unicode lexicographic order);
+
+**(2)**—all the suffixes, likewise, are in alphabetical order, so that
+
+**(3)**—all the co-occurrances of a given infix with all subsequent suffixes (trailing
+    letters in this case) are always neatly clustered.
+
+**(4)**—wherever a new group of a given infix (index letter) starts, the sole
+    letter always comes first, *followed by all those entries that **end** in
+    that letter*; this is a corrollary of the previous points (and happens to be
+    [in agreement with how the shown *Bibliography* is
+    sorted](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA126#v=onepage&q=computer%20language&f=false)).
 
 
 
+## Related Software
 
-
-
+There is a rather obscure UNIX utility by the name of
+[`ptx`](https://en.wikipedia.org/wiki/Ptx_%28Unix%29) and an even more obscure
+GNU version of the same,
+[`gptx`](http://www.math.utah.edu/docs/info/gptx_1.html).
 
 
 
