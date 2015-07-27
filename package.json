@@ -1,6 +1,6 @@
 {
   "name": "kwic",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Keywords In Context",
   "main": "lib/main.js",
   "scripts": {
