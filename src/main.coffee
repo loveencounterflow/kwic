@@ -73,12 +73,12 @@ CND.shim()
   return R
 
 #-----------------------------------------------------------------------------------------------------------
-@get_permutations = ( factors, weights ) ->
+@get_permutations = ( factors, weights, zero = null ) ->
   R = []
   #.........................................................................................................
   weights           = weights[ .. ]
   permutation_count = weights.length
-  weights.push -Infinity
+  weights.push zero
   for infix_idx in [ 0 ... permutation_count ]
     prefix    = factors[ ... infix_idx ]
     infix     = factors[ infix_idx ]
@@ -99,9 +99,10 @@ CND.shim()
 @permute = ( entry, settings ) ->
   factorizer  = settings?[ 'factorizer' ] ? null
   alphabet    = settings?[ 'alphabet'   ] ? null
+  zero        = settings?[ 'zero'       ] ? null
   factors     = @get_factors   entry,   factorizer
   weights     = @get_weights   factors, alphabet
-  return @get_permutations factors, weights
+  return @get_permutations factors, weights, zero
 
 #-----------------------------------------------------------------------------------------------------------
 @sort = ( collection ) ->

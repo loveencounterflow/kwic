@@ -205,11 +205,15 @@ top to bottom along said line, you will observe that
 
 You can use KWIC doing three small steps or doing a single step; the first way
 is probably better when making yourself comfortable with KWIC, to find out where
-things went wrong or to modify intermediate data. The single-step API
-is more convenient for production and discards unneeded intermediate data.
+things went wrong or to modify intermediate data. The single-step API is more
+convenient for production and discards unneeded intermediate data. in both
+cases, the objective is to input some entries and get out a number of
+datastructures—called the 'permutations'—that can be readily used in conjunction
+with the [Hollerith CoDec](https://github.com/loveencounterflow/hollerith-codec)
+and a LevelDB instance to produce a properly sorted KWIC index.
 
 Let's start with the 'slow' API. The first thing you do is to compile a list of
-entries (e.g. words) and prepare and empty list (call it `collection`) to hold
+entries (e.g. words) and prepare an empty list (call it `collection`) to hold
 the permuted keys. Assuming you start with a (somewhat normalized) text and use
 the `unique_words_from_text` function as found in `src/demo.coffee`, the steps
 from raw data to output look like this:
@@ -275,29 +279,30 @@ factors = [ 'c', 'a', 'b', `s`, ]                           # 4
 weights = [  99,  97,  98, 115, ]                           # 5
 
 permutations = [                                            # 6
-  [ [  99,        97,        98,       115, -Infinity, ], 'c', [ 'a', 'b', 's', ], [                ], ]
-  [ [  97,        98,       115, -Infinity,        99, ], 'a', [ 'b', 's',      ], [ 'c',           ], ]
-  [ [  98,       115, -Infinity,        97,        99, ], 'b', [ 's',           ], [ 'c', 'a',      ], ]
-  [ [ 115, -Infinity,        98,        97,        99, ], 's', [                ], [ 'c', 'a', 'b', ], ]
+  [ [  99,    97,    98,   115,  null, ], 'c', [ 'a', 'b', 's', ], [                ], ]
+  [ [  97,    98,   115,  null,    99, ], 'a', [ 'b', 's',      ], [ 'c',           ], ]
+  [ [  98,   115,  null,    97,    99, ], 'b', [ 's',           ], [ 'c', 'a',      ], ]
+  [ [ 115,  null,    98,    97,    99, ], 's', [                ], [ 'c', 'a', 'b', ], ]
   ]
 ```
 Lines marked `#4` show the factors of the word `cab`, which are simply its
 letters or characters. The `#5` points to the weights list, which, again is just
 each character's Unicode codepoint expressed as a decimal number (in this simple
 example, we could obviously just sort using Unicode strings, but on the other
-hand, that simplicity would immediately break down as soon as we wanted to do
-some more locale-specific sorting, such as treating German `ä` either as 'a kind
+hand, that simplicity immediately breaks down as soon when a more
+locale-specific sorting is needed, such as treating German `ä` either as 'a kind
 of `a`' or as 'a kind of `ae`').
 
 Now the first item in each of the three sub-lists of the permutations (lines marked `#6`)
 contains the 'rotated weights' mentioned above. In fact, those weights are not only rotated,
 they
 
-* are extended with an '-Infinity' value (which, being the smallest possible numeric thingy
-  in JavaScript, sorts before any other number);
+* are extended with an 'null' value (which, being (almost) the smallest possible value
+  when [Hollerith CoDec](https://github.com/loveencounterflow/hollerith-codec)-encoded,
+  will sort before anything else);
 
 * contain the weights for the suffixes in *reversed* order; replacing the
-  numbers with letters (using `_` to replace `-Infinity`), the r-weight entries
+  numbers with letters (using `_` to replace `null`), the r-weight entries
   are `cabs_`, `abs_c`, `bs_ac`, and `s_bac`, respectively.
 
 The second point is what causes a slightly more meaningful ordering of the

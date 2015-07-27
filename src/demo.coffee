@@ -126,7 +126,7 @@ unless module.parent?
     permutations  = KWIC.get_permutations factors, weights
     collection.push [ permutations, entry, ]
     for permutation in permutations
-      debug '©uhwuc', permutation, entry
+      # debug '©uhwuc', permutation, entry
       [ r_weights, infix, suffix, prefix, ] = permutation
   KWIC.report collection
   debug '©gm2Im', factors
@@ -137,7 +137,7 @@ unless module.parent?
   # for entry in entries
   #   collection.push [ ( KWIC.permute entry ), entry, ]
   # KWIC.report collection
-
+  # debug '©BX7Tw', CODEC[ 'keys' ][ 'lo' ]
 
   # demo_permute = ->
   #   d   = [ 'a', 'b', 'c', 'd', ]
