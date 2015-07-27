@@ -35,7 +35,7 @@ is one example. Here's page 129 from that 1965 book:
 
 ![*Computer Literature Bibliography: 1946 to 1963*, page 129](https://github.com/loveencounterflow/kwic/raw/master/art/kwic.png)
 
-This title word index goes on for over 309 pages. In the center of each page is
+This title word index goes on for over 300 pages. In the center of each page is
 the current keyword, from `A.C.E.` and `ABACUS` over `COMPUTER` to `ZURICH`,
 followed by numbers representing years and machine models. Each line represents
 the title of a book or article, and each keyword is surrounded by those words as
@@ -65,19 +65,19 @@ infix, call it the *prefix*); this becomes clear when you compare the entries
 near `COMPUTER LANGUAGE` from the picture above with [the entries of pages
 225f.](https://books.google.de/books?id=Ig6tEGv6CTAC&dq=computer%20language&pg=PA225#v=onepage&q=language&f=false)
 of the same work: To the naked eye, the prefixes you might be interested in
-(say, `COMPUTER`, `PROGRAMMING` or `ALGORITHMIC`) are rather haphazardly strewn
-across the place, although some clusters do seem to occur (this, by the way, is
-a weakness of this particular index that we will address and try to remedy a
-little further down).
+(say, `COMPUTER`, `PROGRAMMING` or `ALGORITHMIC` on the above page) are rather
+haphazardly strewn across the place, although some clusters do seem to occur
+(this, by the way, is a weakness of this particular index that we will address
+and try to remedy a little further down).
 
 The main downside of KWIC indexes is also apparent from the *Bibliography*:
 Whereas the register (where all the abbreviations of cited publications are
 listed) takes up roughly 70 and the author index roughly 80 pages, the KWIC
-index as such has no less than 305 pages, meaning each title appears around 4.5
-times on average. This can hardly be otherwise given that the objective of the
-KWIC index is exactly to file each title under each relevant term; however, it
-also helps to explain why printed KWIC indexes had, for the most part, to wait
-for computers to arrive and went out of fashion as soon as computers became
+index as such weighs in with 307 pages, meaning each title appears around 4.5
+times on average. This can hardly be otherwise given that the very objective of
+the KWIC index is exactly to file each title under each relevant term; however,
+it also helps to explain why printed KWIC indexes had, for the most part, to
+wait for computers to arrive and went out of fashion as soon as computers became
 capable of delivering documents online as well. Similarly,
 [concordances](https://de.wikipedia.org/wiki/Konkordanz) were only done for
 subjects and keywords deemed worthy the tremendous effort in terms of time and
@@ -141,8 +141,8 @@ will be greeted with the following output:
               cabdri|ver       cabdriver        # 49
 ```
 
-The above is a KWIC-style permuted index of these 'words', chosen
-to highlight some charcteristics of the implemented algorithm:
+The above is a KWIC-style permuted index of these (artificial and real) 'words',
+chosen to highlight some charcteristics of the implemented algorithm:
 
 ```
 a           ba          cab
@@ -347,13 +347,14 @@ for entry in entries
   permutations = KWIC.permute entry, factorizer: my_factorizer, alphabet: my_weighter
   collection.push [ permutations, entry, ]
 ```
-
+<!--
 ### Unicode Normalization
 [JavaScript Unicode 6.3 Normalization `https://github.com/walling/unorm`](https://github.com/walling/unorm)
 ```
 coffee> ('ä'.normalize d ).split '' for d in ['NFC','NFD','NFKC','NFKD']
 [ [ 'ä' ], [ 'a', '̈' ], [ 'ä' ], [ 'a', '̈' ] ]
 ```
+ -->
 
 ## Relationship to Hollerith, the Binary Phrase DB
 
