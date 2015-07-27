@@ -19,8 +19,10 @@ badge                     = 'KWIC'
 help                      = CND.get_logger 'help',      badge
 # urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
-TEXT                      = require 'coffeenode-text'
+# TEXT                      = require 'coffeenode-text'
 CODEC                     = require 'hollerith-codec'
+#...........................................................................................................
+CND.shim()
 
 
 #-----------------------------------------------------------------------------------------------------------
@@ -143,7 +145,7 @@ CODEC                     = require 'hollerith-codec'
 # FACTORIZERS AND ALPHABETS
 #-----------------------------------------------------------------------------------------------------------
 @factorizers = {
-  'characters':       TEXT.split.bind TEXT
+  'characters':       ( text ) -> Array.from text
   }
 
 #-----------------------------------------------------------------------------------------------------------

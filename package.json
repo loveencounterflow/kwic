@@ -30,7 +30,6 @@
   },
   "dependencies": {
     "cnd": "^1.0.4",
-    "coffeenode-text": "^0.1.9",
     "hollerith-codec": "^1.0.10"
   }
 }

@@ -25,7 +25,7 @@ echo                      = CND.echo.bind CND
 # eventually                = suspend.eventually
 # immediately               = suspend.immediately
 # every                     = suspend.every
-TEXT                      = require 'coffeenode-text'
+# TEXT                      = require 'coffeenode-text'
 LODASH                    = CND.LODASH
 #...........................................................................................................
 KWIC                      = require './main'
@@ -126,17 +126,17 @@ unless module.parent?
     permutations  = KWIC.get_permutations factors, weights
     collection.push [ permutations, entry, ]
     for permutation in permutations
+      debug '©uhwuc', permutation, entry
       [ r_weights, infix, suffix, prefix, ] = permutation
   KWIC.report collection
+  debug '©gm2Im', factors
 
-  echo()
-  entries     = unique_words_from_text text
-  collection  = []
-  for entry in entries
-    collection.push [ ( KWIC.permute entry ), entry, ]
-    # for permutation in permutations
-    #   [ r_weights, infix, suffix, prefix, ] = permutation
-  KWIC.report collection
+  # echo()
+  # entries     = unique_words_from_text text
+  # collection  = []
+  # for entry in entries
+  #   collection.push [ ( KWIC.permute entry ), entry, ]
+  # KWIC.report collection
 
 
   # demo_permute = ->

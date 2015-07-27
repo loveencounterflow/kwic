@@ -4,6 +4,9 @@
 	- [Key Words In Context and Concordances](#key-words-in-context-and-concordances)
 	- [Objective of the `kwic` module](#objective-of-the-kwic-module)
 	- [Usage](#usage)
+		- [Three Steps](#three-steps)
+		- [Single Steps](#single-steps)
+		- [Unicode Normalization](#unicode-normalization)
 	- [Implementation](#implementation)
 	- [Relationship to Hollerith, the Binary Phrase DB](#relationship-to-hollerith-the-binary-phrase-db)
 	- [Related Software](#related-software)
@@ -84,7 +87,7 @@ paper.
 ## Objective of the `kwic` module
 
 `kwic` is a [NodeJS](http://nodejs.org) module; as such, you can install it
-with `npm install kwic`. When you then do `node --harmony lib/demo.js`, you
+with `npm install kwic`. When you then do `node lib/demo.js`, you
 will be greeted with the following output:
 
 ```
@@ -181,7 +184,7 @@ top to bottom along said line, you will observe that
     with that letter, short ones with letters early in the alphabet (`a`, `b`, ...)
     occurring first.
 
-**(6)**—These in turn—and now it gets interesting—are followed by those words
+**(6)**—These in turn—and now it gets interesting—are interspersed by those words
     that contain the infix and are *preceded* by one or more letters, and here
     the rule is again that short words and early letters sort first, *but in the
     prefix, power of ordering counts* **backwards** *from the infix at the right
@@ -197,6 +200,142 @@ top to bottom along said line, you will observe that
 > had we included, say, `bank` and `bar`, those would likewise intervene).
 
 ## Usage
+
+### Three Steps
+
+You can use KWIC doing three small steps or doing a single step; the first way
+is probably better when making yourself comfortable with KWIC, to find out where
+things went wrong or to modify intermediate data. The single-step API
+is more convenient for production and discards unneeded intermediate data.
+
+Let's start with the 'slow' API. The first thing you do is to compile a list of
+entries (e.g. words) and prepare and empty list (call it `collection`) to hold
+the permuted keys. Assuming you start with a (somewhat normalized) text and use
+the `unique_words_from_text` function as found in `src/demo.coffee`, the steps
+from raw data to output look like this:
+
+```coffee
+entries     = unique_words_from_text text                       # 1
+collection  = []                                                # 2
+for entry in entries                                            # 3
+  factors       = KWIC.get_factors      entry                   # 4
+  weights       = KWIC.get_weights      factors                 # 5
+  permutations  = KWIC.get_permutations factors, weights        # 6
+  collection.push [ permutations, entry, ]                      # 7
+  # does nothing, just in case you want to know                 # 8
+  for permutation in permutations                               # 9
+    [ r_weights, infix, suffix, prefix, ] = permutation         # 10
+KWIC.report collection                                          # 11
+```
+
+In the first step, each `entry` that you iterate over gets split into a list of
+'factors'. Each factor represents what is essentially treated as a unit by the
+algorithm; that could be Unicode characters (codepoints), or stretches of
+letters representing syllables, morphemes, or orthographic words; this will
+depend on your use case.
+
+For ease of presentation, the default of `KWIC.get_factors` is to split each
+given string into characters. If you want something different, you may specify a
+factorizer as second argument which should be a function (or the name of a
+registered factorizer method) that accepts an entry string and returns a list of
+strings derived from that input. For commonly occurring cases, a number of named
+factorizers is included as `KWIC.factorizers`.
+
+In the second step, each list of factors gets turned into a list of weights.
+Weights are what will be used for sorting; typically, these are non-negative
+integer numbers, but you could use anything that can be sorted, such as rational
+numbers, negative numbers, lists of numbers or, in fact, strings. As with
+`get_factors`, `get_weights` accepts a second argument, called `alphabet` in
+this case, which may be the name of one of the standard alphabets registered in
+`KWIC.alphabets`, a function that returns a weight when called with a factor, or
+a list that enumerates all possible factors (and whose indices will become
+weights). The general rule is that wherever a given weight is smaller that
+another one, the first will sort before the second, and vice versa.
+
+The essential part happens with the third call, `permutations  =
+KWIC.get_permutations factors, weights`. You can treat the return value as a
+black box; the idea is to push a list with the `permutations` as the the first
+and whatever identifies your `entry` as the second element to your `collection`
+in order to prepare for sorting and output. When you're done with collecting the
+entries, you can pass the `collection` to `KWIC.report`, which will then sort
+and print the result. If you need any kind of further data to point from each
+index row back into, say, page and line numbers where those entries originated,
+you'll have to organize that part yourself (you could make each `entry´ an
+object with the pertinent data attached to it and use a custom factorization
+method).
+
+In case you're interested, the `permutations` list will contain as many
+sub-lists as there were factors, one for each occurrence of the entry in the
+index. Each sub-list starts with an item internally called the `r-weights`, that
+is, a rotated list of weights. Let's look at that for a simple example, the
+entry `cabs`:
+
+```coffee
+factors = [ 'c', 'a', 'b', `s`, ]                           # 4
+weights = [  99,  97,  98, 115, ]                           # 5
+
+permutations = [                                            # 6
+  [ [  99,        97,        98,       115, -Infinity, ], 'c', [ 'a', 'b', 's', ], [                ], ]
+  [ [  97,        98,       115, -Infinity,        99, ], 'a', [ 'b', 's',      ], [ 'c',           ], ]
+  [ [  98,       115, -Infinity,        97,        99, ], 'b', [ 's',           ], [ 'c', 'a',      ], ]
+  [ [ 115, -Infinity,        98,        97,        99, ], 's', [                ], [ 'c', 'a', 'b', ], ]
+  ]
+```
+Lines marked `#4` show the factors of the word `cab`, which are simply its
+letters or characters. The `#5` points to the weights list, which, again is just
+each character's Unicode codepoint expressed as a decimal number (in this simple
+example, we could obviously just sort using Unicode strings, but on the other
+hand, that simplicity would immediately break down as soon as we wanted to do
+some more locale-specific sorting, such as treating German `ä` either as 'a kind
+of `a`' or as 'a kind of `ae`').
+
+Now the first item in each of the three sub-lists of the permutations (lines marked `#6`)
+contains the 'rotated weights' mentioned above. In fact, those weights are not only rotated,
+they
+
+* are extended with an '-Infinity' value (which, being the smallest possible numeric thingy
+  in JavaScript, sorts before any other number);
+
+* contain the weights for the suffixes in *reversed* order; replacing the
+  numbers with letters (using `_` to replace `-Infinity`), the r-weight entries
+  are `cabs_`, `abs_c`, `bs_ac`, and `s_bac`, respectively.
+
+The second point is what causes a slightly more meaningful ordering of the
+entries with a slightly better and more interesting aub-clustering when sorted.
+
+### Single Steps
+
+The exact same result as above may be obtained by a slightly simpler procedure
+that hides the intermediate results:
+
+```coffee
+entries     = unique_words_from_text text
+collection  = []
+for entry in entries
+  collection.push [ ( KWIC.permute entry ), entry, ]
+KWIC.report collection
+```
+Here, we call `KWIC.permute` on each entry. This method will most of the time be called
+with an additional settings object such as:
+
+```coffee
+my_factorizer = ( entry  ) -> return words of entry
+my_weighter   = ( factor ) -> return fancy localized weight for factor
+
+...
+
+for entry in entries
+  permutations = KWIC.permute entry, factorizer: my_factorizer, alphabet: my_weighter
+  collection.push [ permutations, entry, ]
+```
+
+### Unicode Normalization
+[JavaScript Unicode 6.3 Normalization `https://github.com/walling/unorm`](https://github.com/walling/unorm)
+```
+coffee> ('ä'.normalize d ).split '' for d in ['NFC','NFD','NFKC','NFKD']
+[ [ 'ä' ], [ 'a', '̈' ], [ 'ä' ], [ 'a', '̈' ] ]
+```
+
 ## Implementation
 ## Relationship to Hollerith, the Binary Phrase DB
 
