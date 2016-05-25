@@ -29,6 +29,7 @@
     "gulp-sourcemaps": "^1.6.0"
   },
   "dependencies": {
-    "cnd": "^3.0.4"
+    "cnd": "^3.0.4",
+    "hollerith-codec": "^1.0.17"
   }
 }
