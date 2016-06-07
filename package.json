@@ -6,7 +6,7 @@
   "scripts": {
     "build": "coffee --map -o lib -c src",
     "push": "git add . && git commit -m'update' && git push -u origin master",
-    "publish": "npm run build && npm run push && npm version patch && npm publish",
+    "pub": "npm run build && npm run push && npm version patch && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
