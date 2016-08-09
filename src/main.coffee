@@ -14,7 +14,7 @@ badge                     = 'KWIC'
 # info                      = CND.get_logger 'info',      badge
 # whisper                   = CND.get_logger 'whisper',   badge
 # alert                     = CND.get_logger 'alert',     badge
-# debug                     = CND.get_logger 'debug',     badge
+debug                     = CND.get_logger 'debug',     badge
 # warn                      = CND.get_logger 'warn',      badge
 help                      = CND.get_logger 'help',      badge
 # urge                      = CND.get_logger 'urge',      badge
@@ -27,7 +27,7 @@ CND.shim()
 
 #-----------------------------------------------------------------------------------------------------------
 @get_factors = ( entry, factorizer = null ) ->
-  factorizer ?= @_get_factorizer factorizer
+  factorizer = @_get_factorizer factorizer
   return factorizer entry
 
 #-----------------------------------------------------------------------------------------------------------
@@ -127,13 +127,18 @@ CND.shim()
   #.........................................................................................................
   max_length = -Infinity
   for [ prefix, infix, suffix, entry, ] in lineups_and_entries
-    max_length = Math.max max_length, prefix.length
+    length      = infix.length
+    length     += part.length for part in prefix
+    max_length  = Math.max max_length, length
   #.........................................................................................................
   for [ prefix, infix, suffix, entry, ] in lineups_and_entries
-    prefix    = prefix[ ... ]
-    suffix    = suffix[ ... ]
-    prefix.unshift padder until prefix.length is max_length
-    suffix.push    padder until suffix.length is max_length
+    prefix        = prefix[ ... ]
+    suffix        = suffix[ ... ]
+    prefix_length = 0; prefix_length += part.length for part in prefix
+    suffix_length = 0; suffix_length += part.length for part in suffix
+    prefix.unshift padder for _ in [ 0 ... max_length - prefix_length ] by +1
+    # debug '©L9201', entry, infix, suffix
+    suffix.push    padder for _ in [ 0 ... max_length - ( suffix_length + infix.length ) ] by +1
     prefix    = prefix.join joiner
     suffix    = suffix.join joiner
     entry     = if CND.isa_text entry then entry else rpr entry
@@ -147,6 +152,7 @@ CND.shim()
 #-----------------------------------------------------------------------------------------------------------
 @factorizers = {
   'characters':       ( text ) -> Array.from text
+  'syllables':        ( text ) -> text.split '-'
   }
 
 #-----------------------------------------------------------------------------------------------------------

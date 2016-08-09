@@ -142,7 +142,7 @@ will be greeted with the following output:
 ```
 
 The above is a KWIC-style permuted index of these (artificial and real) 'words',
-chosen to highlight some charcteristics of the implemented algorithm:
+chosen to highlight some characteristics of the implemented algorithm:
 
 ```
 a           ba          cab
