@@ -1,3 +1,19 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [KWIC](#kwic)
+  - [Key Words In Context and Concordances](#key-words-in-context-and-concordances)
+  - [Objective of the `kwic` module](#objective-of-the-kwic-module)
+  - [Usage](#usage)
+    - [Three Steps](#three-steps)
+    - [Single Step](#single-step)
+    - [Unicode Normalization](#unicode-normalization)
+  - [Relationship to Hollerith, the Binary Phrase DB](#relationship-to-hollerith-the-binary-phrase-db)
+  - [Related Software](#related-software)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 
 
 - [KWIC](#kwic)

@@ -1,9 +1,12 @@
 {
   "name": "kwic",
-  "version": "1.0.7",
+  "version": "1.0.17",
   "description": "Keywords In Context",
   "main": "lib/main.js",
   "scripts": {
+    "build": "coffee --map -o lib -c src",
+    "push": "git add . && git commit -m'update' && git push",
+    "pub": "npm run build && npm run push && npm version patch && npm publish",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -22,14 +25,8 @@
     "url": "https://github.com/loveencounterflow/kwic/issues"
   },
   "homepage": "https://github.com/loveencounterflow/kwic#readme",
-  "devDependencies": {
-    "coffee-script": "^1.10.0",
-    "gulp": "^3.9.1",
-    "gulp-coffee": "^2.3.2",
-    "gulp-sourcemaps": "^1.6.0"
-  },
   "dependencies": {
-    "cnd": "^3.0.4",
-    "hollerith-codec": "^1.2.2"
+    "cnd": "^4.1.1",
+    "hollerith-codec": "^1.2.5"
   }
 }

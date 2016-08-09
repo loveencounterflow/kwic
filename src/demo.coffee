@@ -3,10 +3,6 @@
 
 
 ############################################################################################################
-# njs_util                  = require 'util'
-# njs_path                  = require 'path'
-# njs_fs                    = require 'fs'
-#...........................................................................................................
 CND                       = require 'cnd'
 rpr                       = CND.rpr
 badge                     = 'KWIC/demo'
@@ -19,17 +15,9 @@ warn                      = CND.get_logger 'warn',      badge
 help                      = CND.get_logger 'help',      badge
 urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
-# suspend                   = require 'coffeenode-suspend'
-# step                      = suspend.step
-# after                     = suspend.after
-# eventually                = suspend.eventually
-# immediately               = suspend.immediately
-# every                     = suspend.every
-# TEXT                      = require 'coffeenode-text'
-LODASH                    = CND.LODASH
 #...........................................................................................................
+LODASH                    = CND.LODASH
 KWIC                      = require './main'
-CODEC                     = require 'hollerith-codec'
 
 
 # text = """a tram also known as tramcar and in north america known as streetcar trolley or trolley car
