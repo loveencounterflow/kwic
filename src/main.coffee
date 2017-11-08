@@ -6,15 +6,12 @@
 CND                       = require 'cnd'
 rpr                       = CND.rpr
 badge                     = 'KWIC'
-<<<<<<< HEAD
 # log                       = CND.get_logger 'plain',     badge
 # info                      = CND.get_logger 'info',      badge
 # whisper                   = CND.get_logger 'whisper',   badge
 # alert                     = CND.get_logger 'alert',     badge
 debug                     = CND.get_logger 'debug',     badge
 # warn                      = CND.get_logger 'warn',      badge
-=======
->>>>>>> 6af784ec3127a9807d2ea4ccc4ecad1d924f3ef2
 help                      = CND.get_logger 'help',      badge
 echo                      = CND.echo.bind CND
 #...........................................................................................................
@@ -22,7 +19,7 @@ CODEC                     = require 'hollerith-codec'
 
 
 #-----------------------------------------------------------------------------------------------------------
-@get_factors = ( entry, factorizer = null ) ->
+@get_factors = ( entry, factorizer = 'characters' ) ->
   factorizer = @_get_factorizer factorizer
   return factorizer entry
 
@@ -69,8 +66,9 @@ CODEC                     = require 'hollerith-codec'
   return R
 
 #-----------------------------------------------------------------------------------------------------------
-@get_permutations = ( factors, weights, zero = null ) ->
+@get_permutations = ( factors, weights, zero = undefined ) ->
   R = []
+  zero = null if zero is undefined
   #.........................................................................................................
   weights           = weights[ .. ]
   permutation_count = weights.length
@@ -81,7 +79,7 @@ CODEC                     = require 'hollerith-codec'
     suffix    = factors[ infix_idx + 1 .. ]
     ### Here we reverse the order of weights in the 'suffix' part of the weights (the part that comes
     behind the guard value); this means that both prefix and suffix weights that are closer to the
-    infix have a stronger influence on the sorting than those that are further away. ###
+    infix have a stronger influence on the sorting than those that are farther away. ###
     r_idx     = permutation_count - infix_idx
     r_weights = weights[ .. r_idx ].concat weights[ r_idx + 1 .. ].reverse()
     R.push [ r_weights, infix, suffix, prefix, ]
@@ -93,9 +91,9 @@ CODEC                     = require 'hollerith-codec'
 
 #-----------------------------------------------------------------------------------------------------------
 @permute = ( entry, settings ) ->
-  factorizer  = settings?[ 'factorizer' ] ? null
-  alphabet    = settings?[ 'alphabet'   ] ? null
-  zero        = settings?[ 'zero'       ] ? null
+  factorizer  = settings?[ 'factorizer' ] ? undefined
+  alphabet    = settings?[ 'alphabet'   ] ? undefined
+  zero        = settings?[ 'zero'       ] ? undefined
   factors     = @get_factors   entry,   factorizer
   weights     = @get_weights   factors, alphabet
   return @get_permutations factors, weights, zero

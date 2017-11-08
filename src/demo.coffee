@@ -16,7 +16,6 @@ help                      = CND.get_logger 'help',      badge
 urge                      = CND.get_logger 'urge',      badge
 echo                      = CND.echo.bind CND
 #...........................................................................................................
-LODASH                    = CND.LODASH
 KWIC                      = require './main'
 
 
@@ -128,10 +127,17 @@ texts =
 
 #-----------------------------------------------------------------------------------------------------------
 unique_words_from_text = ( text ) ->
+  seen  = new Set()
   words = text.split /\s+/
   words = ( word for word in words when word.length > 0 )
   words.sort()
-  return LODASH.uniq words, true
+  R     = []
+  for word in words
+    continue if seen.has word
+    seen.add word
+    R.push word
+  return R
+  # return LODASH.uniq words, true
 
 #-----------------------------------------------------------------------------------------------------------
 demo_1 = ->
